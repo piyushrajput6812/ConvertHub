@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101321">
+<meta name="description" content="Convert images and PDFs in your browser with ConvertHub.">
+<title>ConvertHub — Your file studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script defer src="app.js"></script>
+</head>
+<body>
+<header class="topbar">
+<a class="brand" href="#"><span class="brand-mark">✳</span><span>Convert<span class="accent">Hub</span><small>FILE STUDIO</small></span></a>
+<nav><a href="#studio">Tools</a><a href="#features">Features</a><a href="#privacy">Privacy</a></nav>
+<div class="top-status"><i></i> Browser-powered tools</div>
+</header>
+<main>
+<section class="hero">
+<div class="hero-copy"><div class="eyebrow"><span>✦</span> IMAGE & PDF TOOLS</div><h1>Make files work<br> <span>your way.</span></h1>
+<p>Convert images, control file size, and manage PDF pages — in one simple workspace.</p>
+<div class="hero-points"><span>✓ No account</span><span>✓ Browser-based</span></div></div>
+<div class="hero-visual" aria-hidden="true"><div class="halo halo1"></div><div class="halo halo2"></div><div class="hero-tile tile-a"><span class="tile-pic">▧</span><b>photo.webp</b><small>Optimized</small><em>WEBP</em></div><div class="hero-core"><span>⇄</span><small>CONVERTHUB</small></div><div class="hero-tile tile-b"><span class="tile-pdf">PDF</span><b>document.pdf</b><small>Ready to save</small><em>PDF</em></div><span class="hero-star star-a">✦</span><span class="hero-star star-b">✧</span></div>
+</section>
+<section class="studio section" id="studio">
+<div class="section-title"><div><div class="eyebrow muted">TOOLS</div><h2>Choose your workspace</h2><p>Upload, adjust, and download.</p></div></div>
+<div class="studio-card">
+<div class="tabs" role="tablist"><button class="tab active" id="imageTab" role="tab" aria-selected="true">▧ <span>Image studio</span></button><button class="tab" id="pdfTab" role="tab" aria-selected="false">▤ <span>PDF studio</span></button></div>
+<section class="panel" id="imagePanel">
+<div class="panel-heading"><div><span class="mini-label">IMAGE TOOLKIT</span><h3>Image converter & editor</h3><p>Convert formats, target a file size, crop, resize, and change the background.</p></div><span class="panel-symbol green">▧</span></div>
+<div class="upload-zone" id="imageDrop"><input id="imageInput" type="file" accept="image/*" multiple hidden><div class="upload-icon">↑<i>✦</i></div><h4>Drop your images here</h4><p>or <button type="button" class="link-btn" id="imageBrowse">browse files</button> from your device</p><div class="chips"><span>JPG</span><span>PNG</span><span>WEBP</span><span>BMP*</span><span>GIF*</span></div><small>Files are processed locally when supported. Animated GIFs export as a still image.</small></div>
+<div class="settings-grid">
+<label class="field"><span>Output format</span><select id="imageFormat"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></label>
+<label class="field"><span>Quality <b id="qualityValue">85%</b></span><input id="imageQuality" type="range" min="5" max="100" value="85"><small>JPG/WebP quality control</small></label>
+<label class="field"><span>Target file size</span><div class="inline-input"><input id="targetSize" type="number" min="1" max="100000" placeholder="e.g. 100"><select id="targetUnit"><option value="KB">KB</option><option value="MB">MB</option></select></div><small>Attempts to match the exact size; very small targets may reduce dimensions.</small></label>
+<label class="field"><span>Resize preset</span><select id="ratioPreset"><option value="original">Original dimensions</option><option value="1:1">Square · 1:1</option><option value="4:3">Classic · 4:3</option><option value="3:2">Photo · 3:2</option><option value="16:9">Widescreen · 16:9</option><option value="9:16">Portrait · 9:16</option><option value="passport">Passport-style · 3.5:4.5</option><option value="custom">Custom dimensions</option></select></label>
+<label class="field"><span>Width (px)</span><input id="imageWidth" type="number" min="1" max="20000" placeholder="Original"></label>
+<label class="field"><span>Height (px)</span><input id="imageHeight" type="number" min="1" max="20000" placeholder="Original"></label>
+<label class="field"><span>Crop shape</span><select id="cropShape"><option value="none">No crop</option><option value="rect">Rectangular crop</option><option value="square">Square crop</option><option value="circle">Circular crop (transparent PNG/WebP)</option></select></label>
+<label class="field"><span>Background fill</span><select id="backgroundFill"><option value="transparent">Keep transparency</option><option value="white">White background</option><option value="black">Black background</option></select></label>
+</div>
+
+<div class="remove-bg-row"><div class="remove-bg-icon">✧</div><div class="remove-bg-copy"><b>Remove background</b><small>Optional AI processing; requires an internet connection on first use.</small></div><label class="switch"><input type="checkbox" id="removeBackground"><span></span></label></div>
+<div class="queue-section hidden" id="imageQueueWrap"><div class="queue-heading"><b>Selected images <span id="imageCount"></span></b><button class="link-btn" id="clearImages" type="button">Clear all</button></div><div class="file-queue" id="imageQueue"></div></div>
+<div class="action-row"><span class="status" id="imageStatus" aria-live="polite">Ready when you are.</span><button class="primary-btn" id="convertImages" disabled>Convert images <span>→</span></button></div>
+<div class="results hidden" id="imageResults"><div class="results-heading"><div><span class="success-dot">✓</span><b>Ready to download</b></div><button class="download-all" id="downloadImagesZip">Download all <span>↓</span></button></div><div class="result-grid" id="imageResultList"></div></div>
+</section>
+<section class="panel hidden" id="pdfPanel">
+<div class="panel-heading"><div><span class="mini-label">PDF TOOLKIT</span><h3>PDF workspace</h3><p>Preview every page, choose pages visually, and export in the format you need.</p></div><span class="panel-symbol coral">PDF</span></div>
+<div class="upload-zone compact" id="pdfDrop"><input id="pdfInput" type="file" accept=".pdf,application/pdf" multiple hidden><div class="upload-icon pdf-upload-icon">↑<i>✦</i></div><h4>Drop PDFs here</h4><p>or <button type="button" class="link-btn" id="pdfBrowse">browse files</button> from your device</p><div class="chips"><span>PDF</span><span>DOCX</span><span>JPG / PNG</span></div><small>For Word-to-PDF, select that action and upload a .docx file. .doc is not supported by browser-only conversion.</small></div>
+<div class="settings-grid pdf-settings">
+<label class="field wide"><span>Choose an action</span><select id="pdfAction">
+<option value="merge">Merge PDFs</option><option value="extract">Extract selected pages to PDF</option><option value="remove">Remove selected pages</option><option value="split">Split into one PDF per page (ZIP)</option><option value="rotate">Rotate selected pages</option><option value="images">Images to PDF</option><option value="render">PDF pages to JPG/PNG</option><option value="word">Word (.docx) to PDF</option><option value="compress">Compress PDF (rasterized output)</option><option value="watermark">Add text watermark</option><option value="numbers">Add page numbers</option><option value="resize">Change page size / fit to A4</option></select></label>
+<label class="field" id="pageRangeField"><span>Page selection / range</span><input id="pageRange" type="text" placeholder="e.g. 1-3, 5"><small>Use 1-based page numbers. If blank, selected thumbnails are used.</small></label>
+<label class="field hidden" id="rotationField"><span>Rotation</span><select id="rotation"><option value="90">90° clockwise</option><option value="180">180°</option><option value="270">270° clockwise</option></select></label>
+<label class="field hidden" id="renderFormatField"><span>Image output</span><select id="renderFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option></select></label>
+<label class="field hidden" id="pageSizeField"><span>Target page size</span><select id="pageSize"><option value="a4-fit">A4 · Fit content</option><option value="a4-fill">A4 · Fill / crop</option><option value="letter-fit">US Letter · Fit</option><option value="original">Keep original size</option></select></label>
+<label class="field hidden" id="watermarkField"><span>Watermark text</span><input id="watermarkText" type="text" placeholder="CONFIDENTIAL"></label>
+<label class="field hidden" id="wordPageField"><span>Paper size</span><select id="wordPageSize"><option value="a4">A4</option><option value="letter">US Letter</option></select></label>
+</div>
+<div class="pdf-notice" id="pdfNotice"><b>✦</b><span>Upload a PDF to generate live page thumbnails. Click pages to select them, drag to reorder, or use the page range field.</span></div>
+<div class="page-workspace hidden" id="pageWorkspace"><div class="page-toolbar"><div><b>Page preview</b><small id="pageCountLabel">0 pages</small></div><div class="page-actions"><button class="small-btn" id="selectAllPages" type="button">Select all</button><button class="small-btn" id="clearPageSelection" type="button">Clear selection</button></div></div><div class="page-grid" id="pageGrid"></div><div class="page-help">Click a thumbnail to select it. Drag cards to reorder pages before exporting. Changes are applied to the first PDF in the queue.</div></div>
+<div class="queue-section hidden" id="pdfQueueWrap"><div class="queue-heading"><b>Selected files <span id="pdfCount"></span></b><button class="link-btn" id="clearPdfs" type="button">Clear all</button></div><div class="file-queue" id="pdfQueue"></div><div class="queue-help" id="queueHelp">Drag files to change their order before merging.</div></div>
+<div class="action-row"><span class="status" id="pdfStatus" aria-live="polite">Ready when you are.</span><button class="primary-btn" id="processPdf" disabled>Process files <span>→</span></button></div>
+<div class="results hidden" id="pdfResults"><div class="results-heading"><div><span class="success-dot">✓</span><b>Your files are ready</b></div><button class="download-all" id="downloadPdfZip">Download all <span>↓</span></button></div><div class="result-grid" id="pdfResultList"></div></div>
+</section>
+</div></section>
+<section class="features section" id="features"><div class="eyebrow muted">CONVERTHUB</div><h2>Useful tools, <span>without the clutter.</span></h2><div class="feature-grid"><article><div class="feature-icon lilac">▧</div><h3>Image control</h3><p>Choose formats, dimensions, crop shapes, backgrounds and target file size.</p></article><article><div class="feature-icon mint">▤</div><h3>Visual PDF pages</h3><p>Preview, select, reorder and process pages with a thumbnail-first workflow.</p></article><article><div class="feature-icon peach">↓</div><h3>Better downloads</h3><p>Clear result cards, file sizes, individual downloads and ZIP bundles.</p></article></div></section>
+<section class="privacy section" id="privacy"><div class="privacy-symbol">⌑</div><div><h3>Your files aren't our business.</h3><p>Image and PDF processing runs in your browser for supported operations. Third-party libraries and optional background removal require an internet connection.</p></div><span>LOCAL-FIRST</span></section>
+</main>
+<footer><a class="brand footer-brand" href="#"><span class="brand-mark">✳</span><span>Convert<span class="accent">Hub</span></span></a><span>Designed and developed by <strong>Piyush Thakur</strong></span><a href="#studio">Back to tools ↑</a></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="docxRenderHost" aria-hidden="true"></div>
+</body></html>
